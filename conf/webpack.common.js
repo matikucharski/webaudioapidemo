@@ -70,7 +70,8 @@ module.exports = {
 			name: 'vendor'
 		}),
 		new HtmlWebpackPlugin({
-			template: 'index.html'
+			template: 'index.html',
+			favicon: 'static/favicon.ico'
 		}),
 		extractSass
 	]
