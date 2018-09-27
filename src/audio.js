@@ -7,6 +7,7 @@ export class Sound {
 		this.canvasCtx = canvas && canvas.getContext('2d');
 		this.drawVisual; // for requestAnimationFrame
 		this.visualizationSetting = 'frequency';
+		this.volume = 0.5;
 	}
 
 	init() {
@@ -26,7 +27,7 @@ export class Sound {
 		this.oscillator.type = 'sine';
 		this.oscillator.frequency.value = 440;
 
-		this.gainNode.gain.value = 0.5;
+		this.gainNode.gain.value = this.volume;
 
 		// connect sound source to gain to allow changing volume
 		this.oscillator.connect(this.analyser);
@@ -35,17 +36,23 @@ export class Sound {
 		// connect volume (final node) to output
 		this.gainNode.connect(this.context.destination);
 	}
+	set gain(val) {
+		this.volume = +val || 0.001; // exponentialRampToValueAtTime throws error if there is value <= 0
+		this.gainNode.gain.exponentialRampToValueAtTime(this.volume, this.context.currentTime + 0.05);
+	}
 
 	play() {
-		this.init();
+		this.init(); //TODO - check it
 
-		this.gainNode.gain.setValueAtTime(0.5, this.context.currentTime);
+		this.gainNode.gain.exponentialRampToValueAtTime(this.volume, this.context.currentTime + 0.05);
 
 		this.oscillator.start();
 	}
 
 	stop() {
-		this.gainNode.gain.exponentialRampToValueAtTime(0.001, this.context.currentTime + 1);
+		// exponentially change gain to very low level (value must be positive) in 0.05 second
+		this.gainNode.gain.exponentialRampToValueAtTime(0.001, this.context.currentTime + 0.05);
+		// and also after one second stop oscillator
 		this.oscillator.stop(this.context.currentTime + 1);
 	}
 

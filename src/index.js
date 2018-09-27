@@ -20,40 +20,41 @@ window.onload = function() {
 	$panning.value = window.sound.panNode.pan.value;
 	$oscilatorType.value = window.sound.oscillator.type;
 
-	document.querySelector('.play').addEventListener('click',function(e){
+	document.querySelector('.play').addEventListener('click', function(e){
 		e.preventDefault();
 		window.sound.play();
-	},false);
+	}, false);
 
-	document.querySelector('.stop').addEventListener('click',function(e){
+	document.querySelector('.stop').addEventListener('click', function(e){
 		e.preventDefault();
 		window.sound.stop();
-	},false);
+	}, false);
 
-	$volume.addEventListener('change',function(e){
+	$volume.addEventListener('change', function(e){
 		e.preventDefault();
-		window.sound.gainNode.gain.value = e.target.value;
-	},false);
+		window.sound.gain.setValueAtTime(e.target.value, window.sound.context.currentTime);
+	}, false);
 
-	$panning.addEventListener('change',function(e){
+	$panning.addEventListener('change', function(e){
 		e.preventDefault();
-		window.sound.panNode.pan.value = e.target.value;
-	},false);
+		window.sound.panNode.pan.setValueAtTime(e.target.value, window.sound.context.currentTime);
+	}, false);
 
 	// ctrl + click reset panner to default "middle" value
-	$panning.addEventListener('click',function(e){
+	$panning.addEventListener('click', function(e){
 		e.preventDefault();
 		if (e.ctrlKey) {
 			e.target.value = 0;
-			window.sound.panNode.pan.value = 0;
+			window.sound.panNode.pan.setValueAtTime(0, window.sound.context.currentTime);
 		}
-	},false);
+	}, false);
 
-	$frequency.addEventListener('change',function(e){
+	$frequency.addEventListener('change', function(e){
 		e.preventDefault();
 		window.sound.oscillator.frequency.value = e.target.value;
-	},false);
+	}, false);
+
 	$oscilatorType.addEventListener('change',function(e){
 		window.sound.oscillator.type = e.target.value;
-	},false);
+	}, false);
 };
