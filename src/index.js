@@ -40,6 +40,15 @@ window.onload = function() {
 		window.sound.panNode.pan.value = e.target.value;
 	},false);
 
+	// ctrl + click reset panner to default "middle" value
+	$panning.addEventListener('click',function(e){
+		e.preventDefault();
+		if (e.ctrlKey) {
+			e.target.value = 0;
+			window.sound.panNode.pan.value = 0;
+		}
+	},false);
+
 	$frequency.addEventListener('change',function(e){
 		e.preventDefault();
 		window.sound.oscillator.frequency.value = e.target.value;
