@@ -1,6 +1,3 @@
-// init audio context
-const context = new (window.AudioContext || window.webkitAudioContext)();
-
 export class Sound {
 
 	constructor(context, canvas) {
@@ -24,11 +21,12 @@ export class Sound {
 		this.analyser.maxDecibels = -10;
 		this.analyser.smoothingTimeConstant = 0.85;
 
-		this.oscillator.type = 'triangle';
+		this.oscillator.type = 'sine';
 		this.oscillator.frequency.value = 440;
 
 		// connect sound source to gain to allow changing volume
-		this.oscillator.connect(this.gainNode);
+		this.oscillator.connect(this.analyser);
+		this.analyser.connect(this.gainNode);
 		// connect volume (final node) to output
 		this.gainNode.connect(this.context.destination);
 	}
@@ -101,7 +99,7 @@ export class Sound {
 
 			this.canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
 
-			const drawAlt = function() {
+			const drawAlt = ()=>{
 				this.drawVisual = requestAnimationFrame(drawAlt);
 
 				this.analyser.getByteFrequencyData(dataArrayAlt);
@@ -134,10 +132,3 @@ export class Sound {
 	}
 
 }
-
-window.onload = function() {
-	window.lol = new Sound(context);
-	window.lol.init();
-	const canvas = document.querySelector('.visualizer');
-	console.log('%c MATIdebug: ', 'background: #222; color: #bada55', canvas);
-};
