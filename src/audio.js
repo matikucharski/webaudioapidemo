@@ -6,7 +6,7 @@ export class Sound {
 		this.canvas = canvas;
 		this.canvasCtx = canvas && canvas.getContext('2d');
 		this.drawVisual; // for requestAnimationFrame
-		this.visualizationSetting = 'sinewave';
+		this.visualizationSetting = 'frequency';
 	}
 
 	init() {
@@ -14,6 +14,8 @@ export class Sound {
 		this.oscillator = this.context.createOscillator();
 		// create gain node for changing volume
 		this.gainNode = this.context.createGain();
+		// create node for panning
+		this.panNode = this.context.createStereoPanner();
 		// create analyzer node
 		this.analyser = this.context.createAnalyser();
 
@@ -24,9 +26,12 @@ export class Sound {
 		this.oscillator.type = 'sine';
 		this.oscillator.frequency.value = 440;
 
+		this.gainNode.gain.value = 0.5;
+
 		// connect sound source to gain to allow changing volume
 		this.oscillator.connect(this.analyser);
-		this.analyser.connect(this.gainNode);
+		this.analyser.connect(this.panNode);
+		this.panNode.connect(this.gainNode);
 		// connect volume (final node) to output
 		this.gainNode.connect(this.context.destination);
 	}
@@ -48,7 +53,7 @@ export class Sound {
 		const WIDTH = this.canvas.width;
 		const HEIGHT = this.canvas.height;
 
-		if (this.visualizationSetting === 'sinewave') {
+		if (this.visualizationSetting === 'amplitude') {
 			this.analyser.fftSize = 2048;
 			const bufferLength = this.analyser.fftSize;
 			const dataArray = new Uint8Array(bufferLength);
@@ -92,7 +97,7 @@ export class Sound {
 
 			draw();
 
-		} else if (this.visualizationSetting === 'frequencybars') {
+		} else if (this.visualizationSetting === 'frequency') {
 			this.analyser.fftSize = 256;
 			const bufferLengthAlt = this.analyser.frequencyBinCount;
 			const dataArrayAlt = new Uint8Array(bufferLengthAlt);
