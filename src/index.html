@@ -7,7 +7,19 @@
         <title>Web Audio API Demo</title>
     </head>
     <body>
-        <div class="hello" id="root"></div>
-        <canvas class="visualizer" width="640" height="100"></canvas>
+        <div class="wrap">
+            <h2>Visualizer</h2>
+            <canvas class="visualizer" width="640" height="100"></canvas>
+        </div>
+    <div class="wrap">
+        <button class="play">Play</button>
+        <button class="stop">Stop</button>
+        <select name="oscillator-type" id="">
+            <option value="sine">sine</option>
+            <option value="triangle">triangle</option>
+            <option value="square">square</option>
+            <option value="sawtooth">sawtooth</option>
+        </select>
+    </div>
     </body>
 </html>
