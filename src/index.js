@@ -15,7 +15,9 @@ window.onload = function() {
 	window.sound.visualize();
 
 	// ********  set inputs to default initial values
-	$volume.value = window.sound.gainNode.gain.value;
+	const initialLp = Math.log10(10*window.sound.gainNode.gain.value + 1);
+	$volume.value = initialLp >= 1 ? 1 : initialLp;
+	// $volume.value = window.sound.gainNode.gain.value;
 	$frequency.value = window.sound.oscillator.frequency.value;
 	$panning.value = window.sound.panNode.pan.value;
 	$oscilatorType.value = window.sound.oscillator.type;
@@ -32,7 +34,12 @@ window.onload = function() {
 
 	$volume.addEventListener('change', function(e){
 		e.preventDefault();
-		window.sound.gain.setValueAtTime(e.target.value, window.sound.context.currentTime);
+		/*
+		Math.pow(10, x) is inverse function of Math.log10(y)
+		Human hearing is logarithmic so to compensate this we need to change volume exponentially to make changing volume smooth form 0 to 100% of loudness
+		 */
+		window.sound.gain = e.target.value <= 0 ? 0 : Math.pow(10, e.target.value)/10 - 0.1;
+		// window.sound.gainNode.gain.setValueAtTime(e.target.value, window.sound.context.currentTime);
 	}, false);
 
 	$panning.addEventListener('change', function(e){
