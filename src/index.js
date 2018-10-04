@@ -1,5 +1,6 @@
 import './index.scss';
 import {Sound} from 'audio';
+import initMIDI from 'midi';
 
 window.onload = function() {
 	// init audio context
@@ -10,6 +11,7 @@ window.onload = function() {
 	const $volume = document.querySelector('#volume');
 	const $panning = document.querySelector('#panning');
 	const $frequency = document.querySelector('#frequency');
+	const $enableMIDIbutton = document.querySelector('#enable-midi');
 	window.sound = new Sound(context, $canvas);
 	window.sound.init();
 	window.sound.visualize();
@@ -21,6 +23,11 @@ window.onload = function() {
 	$frequency.value = window.sound.oscillator.frequency.value;
 	$panning.value = window.sound.panNode.pan.value;
 	$oscilatorType.value = window.sound.oscillator.type;
+
+	$enableMIDIbutton.addEventListener('click', function(e){
+		e.preventDefault();
+		initMIDI();
+	}, false);
 
 	document.querySelector('.play').addEventListener('click', function(e){
 		e.preventDefault();
