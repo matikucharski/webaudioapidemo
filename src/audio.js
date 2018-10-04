@@ -6,7 +6,7 @@ export class Sound {
 		this.canvas = canvas;
 		this.canvasCtx = canvas && canvas.getContext('2d');
 		this.drawVisual; // for requestAnimationFrame
-		this.visualizationSetting = 'frequency';
+		this.visualizationSetting = 'amplitude';
 		this.volume = 0.5;
 	}
 
@@ -50,8 +50,8 @@ export class Sound {
 	}
 
 	stop() {
-		// exponentially change gain to very low level (value must be positive) in 0.05 second
-		this.gainNode.gain.exponentialRampToValueAtTime(0.001, this.context.currentTime + 0.05);
+		// exponentially change gain to very low level (value must be positive) in 1 second
+		this.gainNode.gain.exponentialRampToValueAtTime(0.001, this.context.currentTime + 1);
 		// and also after one second stop oscillator
 		this.oscillator.stop(this.context.currentTime + 1);
 	}
@@ -86,8 +86,8 @@ export class Sound {
 
 				for (let i = 0; i < bufferLength; i++) {
 
-					const v = dataArray[i] / 128.0;
-					const y = v * HEIGHT/2;
+					const v = dataArray[i] / 128.0 * this.gainNode.gain.value;
+					const y = v * HEIGHT/2 + HEIGHT/2 * (1 - this.gainNode.gain.value);
 
 					if(i === 0) {
 						this.canvasCtx.moveTo(x, y);
