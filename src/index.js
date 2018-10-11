@@ -50,6 +50,21 @@ window.onload = function() {
 			} else if (note === 117 && velocity > 0) {
 				window.sound.play();
 			}
+		},
+		pads({note, velocity}) {
+			if (note === 36) {
+				window.sound.oscillator.type = 'sine';
+				window.sound.oscillator.type = 'sine';
+			} else if (note === 37) {
+				window.sound.oscillator.type = 'triangle';
+				window.sound.oscillator.type = 'triangle';
+			} else if (note === 38) {
+				window.sound.oscillator.type = 'square';
+				window.sound.oscillator.type = 'square';
+			} else if (note === 39) {
+				window.sound.oscillator.type = 'sawtooth';
+				window.sound.oscillator.type = 'sawtooth';
+			}
 		}
 	});
 

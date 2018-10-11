@@ -44,6 +44,8 @@ export default function initMIDI(callbacks = {}) {
 			case 191:
 				(callbacks.transportButtons || transportButtons)({note, velocity});
 				break;
+			case 153:
+				(callbacks.pads || pads)({note, velocity});
 		}
 	}
 
@@ -72,5 +74,9 @@ export default function initMIDI(callbacks = {}) {
 		} else if (note === 23) {
 			console.log('%c first knob:', 'background: #222; color: #bada55', velocity);
 		}
+	}
+
+	function pads({note, velocity}) {
+		console.log('%c pads:', 'background: #222; color: #bada55', note, velocity);
 	}
 }
