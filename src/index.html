@@ -11,13 +11,18 @@
             <legend>Visualizer</legend>
 
             <canvas class="visualizer" width="640" height="100"></canvas>
+
+            <select name="visualizer-type">
+                <option value="amplitude">amplitude</option>
+                <option value="frequency">frequency</option>
+            </select>
         </fieldset>
         <fieldset>
             <legend>Audio controls</legend>
 
             <button class="play">Play</button>
             <button class="stop">Stop</button>
-            <select name="oscillator-type" id="">
+            <select name="oscillator-type">
                 <option value="sine">sine</option>
                 <option value="triangle">triangle</option>
                 <option value="square">square</option>

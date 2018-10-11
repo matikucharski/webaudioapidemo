@@ -10,6 +10,7 @@ window.onload = function() {
 
 	const $canvas = document.querySelector('.visualizer');
 	const $oscilatorType = document.querySelector('[name=oscillator-type]');
+	const $visualizerType = document.querySelector('[name=visualizer-type]');
 	const $volume = document.querySelector('#volume');
 	const $panning = document.querySelector('#panning');
 	const $frequency = document.querySelector('#frequency');
@@ -24,6 +25,7 @@ window.onload = function() {
 	$frequency.value = window.sound.oscillator.frequency.value;
 	$panning.value = window.sound.panNode.pan.value;
 	$oscilatorType.value = window.sound.oscillator.type;
+	$visualizerType.value = window.sound.visualizationSetting;
 
 	// ************************** init MIDI here *******************************************************************
 	initMIDI({
@@ -52,18 +54,28 @@ window.onload = function() {
 			}
 		},
 		pads({note, velocity}) {
-			if (note === 36) {
+			if (note === 36 && velocity > 0) {
 				window.sound.oscillator.type = 'sine';
 				window.sound.oscillator.type = 'sine';
-			} else if (note === 37) {
+			} else if (note === 37 && velocity > 0) {
 				window.sound.oscillator.type = 'triangle';
 				window.sound.oscillator.type = 'triangle';
-			} else if (note === 38) {
+			} else if (note === 38 && velocity > 0) {
 				window.sound.oscillator.type = 'square';
 				window.sound.oscillator.type = 'square';
-			} else if (note === 39) {
+			} else if (note === 39 && velocity > 0) {
 				window.sound.oscillator.type = 'sawtooth';
 				window.sound.oscillator.type = 'sawtooth';
+			} else if (note === 40 && velocity > 0) {
+				window.sound.visualizationSetting = 'amplitude';
+				$visualizerType.value = 'amplitude';
+				window.sound.stopVisualize();
+				window.sound.visualize();
+			} else if (note === 41 && velocity > 0) {
+				window.sound.visualizationSetting = 'frequency';
+				$visualizerType.value = 'frequency';
+				window.sound.stopVisualize();
+				window.sound.visualize();
 			}
 		}
 	});
@@ -109,5 +121,11 @@ window.onload = function() {
 
 	$oscilatorType.addEventListener('change',function(e){
 		window.sound.oscillator.type = e.target.value;
+	}, false);
+
+	$visualizerType.addEventListener('change',function(e){
+		window.sound.visualizationSetting = e.target.value;
+		window.sound.stopVisualize();
+		window.sound.visualize();
 	}, false);
 };

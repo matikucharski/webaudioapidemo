@@ -105,7 +105,7 @@ export class Sound {
 			draw();
 
 		} else if (this.visualizationSetting === 'frequency') {
-			this.analyser.fftSize = 256;
+			this.analyser.fftSize = 1024;
 			const bufferLengthAlt = this.analyser.frequencyBinCount;
 			const dataArrayAlt = new Uint8Array(bufferLengthAlt);
 
@@ -141,6 +141,9 @@ export class Sound {
 			this.canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
 		}
 
+	}
+	stopVisualize() {
+		cancelAnimationFrame(window.sound.drawVisual);
 	}
 
 }
