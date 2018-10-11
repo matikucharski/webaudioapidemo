@@ -2,6 +2,8 @@ import './index.scss';
 import {Sound} from 'audio';
 import initMIDI from 'midi';
 
+import {MAX_FREQUENCY, MIN_FREQUENCY} from './const';
+
 window.onload = function() {
 	// init audio context
 	const context = new (window.AudioContext || window.webkitAudioContext)();
@@ -26,7 +28,25 @@ window.onload = function() {
 
 	$enableMIDIbutton.addEventListener('click', function(e){
 		e.preventDefault();
-		initMIDI();
+		initMIDI({
+			potentiometer({note, velocity}) {
+				if (note === 1) {
+					const frequency = velocity * (MAX_FREQUENCY - MIN_FREQUENCY) / 127 + MIN_FREQUENCY;
+					const normalizedValue = velocity / 127;
+					const logValue = Math.pow(10, normalizedValue)/10;
+					console.log('%c MATIdebug: ', 'background: #222; color: #bada55', logValue);
+					window.sound.oscillator.frequency.value = frequency;
+					$frequency.value = frequency;
+				}
+			},
+			transportButtons({note, velocity}) {
+				if (note === 116 && velocity > 0) {
+					window.sound.stop();
+				} else if (note === 117 && velocity > 0) {
+					window.sound.play();
+				}
+			}
+		});
 	}, false);
 
 	document.querySelector('.play').addEventListener('click', function(e){
