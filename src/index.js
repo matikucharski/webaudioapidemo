@@ -2,7 +2,7 @@ import './index.scss';
 import {Sound} from 'audio';
 import initMIDI from 'midi';
 
-import {MAX_FREQUENCY, MIN_FREQUENCY} from './const';
+import {MAX_FREQUENCY, midiTofreq, MIN_FREQUENCY} from './utils';
 
 window.onload = function() {
 	// init audio context
@@ -26,6 +26,7 @@ window.onload = function() {
 	$panning.value = window.sound.panNode.pan.value;
 	$oscilatorType.value = window.sound.oscillator.type;
 	$visualizerType.value = window.sound.visualizationSetting;
+	let lastPlayedNote;
 
 	// ************************** init MIDI here *******************************************************************
 	initMIDI({
@@ -43,7 +44,11 @@ window.onload = function() {
 				$volume.value = logValue;
 				console.log('%c first slider:', 'background: #222; color: #bada55', velocity, normalizedValue);
 			} else if (note === 23) {
-				console.log('%c first knob:', 'background: #222; color: #bada55', velocity);
+				const frequency = velocity * (MAX_FREQUENCY - MIN_FREQUENCY) / 127 + MIN_FREQUENCY;
+				const normalizedValue = velocity / 127;
+				const logValue = (Math.pow(10, normalizedValue)/10 - 0.1) * (MAX_FREQUENCY - MIN_FREQUENCY) + MIN_FREQUENCY;
+				window.sound.oscillator.frequency.value = logValue;
+				$frequency.value = logValue;
 			}
 		},
 		transportButtons({note, velocity}) {
@@ -76,6 +81,17 @@ window.onload = function() {
 				$visualizerType.value = 'frequency';
 				window.sound.stopVisualize();
 				window.sound.visualize();
+			}
+		},
+		noteOn({note, velocity}) {
+			window.sound.oscillator.frequency.exponentialRampToValueAtTime(midiTofreq(note), window.sound.context.currentTime + 0.1);
+			const normalizedValue = velocity / 127;
+			window.sound.gain = normalizedValue;
+			lastPlayedNote = note;
+		},
+		noteOff({note}) {
+			if (lastPlayedNote === note) {
+				window.sound.gainNode.gain.exponentialRampToValueAtTime(0.0001, window.sound.context.currentTime + 0.005);
 			}
 		}
 	});

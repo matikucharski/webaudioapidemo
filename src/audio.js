@@ -37,7 +37,7 @@ export class Sound {
 		this.gainNode.connect(this.context.destination);
 	}
 	set gain(val) {
-		this.volume = +val || 0.001; // exponentialRampToValueAtTime throws error if there is value <= 0
+		this.volume = +val || 0.0001; // exponentialRampToValueAtTime throws error if there is value <= 0
 		this.gainNode.gain.exponentialRampToValueAtTime(this.volume, this.context.currentTime + 0.05);
 	}
 
