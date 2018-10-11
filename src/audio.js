@@ -10,7 +10,7 @@ export class Sound {
 		this.volume = 0.5;
 	}
 
-	init() {
+	init(options = {}) { // eslint-disable-line
 		// create oscillator node - for generating sound
 		this.oscillator = this.context.createOscillator();
 		// create gain node for changing volume
@@ -30,11 +30,12 @@ export class Sound {
 		this.gainNode.gain.value = this.volume;
 
 		// connect sound source to gain to allow changing volume
-		this.oscillator.connect(this.analyser);
+		this.oscillator.connect(this.gainNode);
+		this.gainNode.connect(this.analyser);
+		// this.filterNode.connect(this.analyser);
 		this.analyser.connect(this.panNode);
-		this.panNode.connect(this.gainNode);
 		// connect volume (final node) to output
-		this.gainNode.connect(this.context.destination);
+		this.panNode.connect(this.context.destination);
 	}
 	set gain(val) {
 		this.volume = +val || 0.0001; // exponentialRampToValueAtTime throws error if there is value <= 0
@@ -86,8 +87,8 @@ export class Sound {
 
 				for (let i = 0; i < bufferLength; i++) {
 
-					const v = dataArray[i] / 128.0 * this.gainNode.gain.value;
-					const y = v * HEIGHT/2 + HEIGHT/2 * (1 - this.gainNode.gain.value);
+					const v = dataArray[i] / 128.0;
+					const y = v * HEIGHT/2;
 
 					if(i === 0) {
 						this.canvasCtx.moveTo(x, y);
