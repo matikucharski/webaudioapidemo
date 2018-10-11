@@ -13,7 +13,6 @@ window.onload = function() {
 	const $volume = document.querySelector('#volume');
 	const $panning = document.querySelector('#panning');
 	const $frequency = document.querySelector('#frequency');
-	const $enableMIDIbutton = document.querySelector('#enable-midi');
 	window.sound = new Sound(context, $canvas);
 	window.sound.init();
 	window.sound.visualize();
@@ -26,28 +25,33 @@ window.onload = function() {
 	$panning.value = window.sound.panNode.pan.value;
 	$oscilatorType.value = window.sound.oscillator.type;
 
-	$enableMIDIbutton.addEventListener('click', function(e){
-		e.preventDefault();
-		initMIDI({
-			potentiometer({note, velocity}) {
-				if (note === 1) {
-					const frequency = velocity * (MAX_FREQUENCY - MIN_FREQUENCY) / 127 + MIN_FREQUENCY;
-					const normalizedValue = velocity / 127;
-					const logValue = Math.pow(10, normalizedValue)/10;
-					console.log('%c MATIdebug: ', 'background: #222; color: #bada55', logValue);
-					window.sound.oscillator.frequency.value = frequency;
-					$frequency.value = frequency;
-				}
-			},
-			transportButtons({note, velocity}) {
-				if (note === 116 && velocity > 0) {
-					window.sound.stop();
-				} else if (note === 117 && velocity > 0) {
-					window.sound.play();
-				}
+	// ************************** init MIDI here *******************************************************************
+	initMIDI({
+		potentiometer({note, velocity}) {
+			if (note === 1) {
+				const frequency = velocity * (MAX_FREQUENCY - MIN_FREQUENCY) / 127 + MIN_FREQUENCY;
+				const normalizedValue = velocity / 127;
+				const logValue = (Math.pow(10, normalizedValue)/10 - 0.1) * (MAX_FREQUENCY - MIN_FREQUENCY) + MIN_FREQUENCY;
+				window.sound.oscillator.frequency.value = logValue;
+				$frequency.value = logValue;
+			} else if (note === 8) {
+				const normalizedValue = velocity / 127;
+				const logValue = normalizedValue <= 0 ? 0 : Math.pow(10, normalizedValue)/10 - 0.1;
+				window.sound.gain = logValue;
+				$volume.value = logValue;
+				console.log('%c first slider:', 'background: #222; color: #bada55', velocity, normalizedValue);
+			} else if (note === 23) {
+				console.log('%c first knob:', 'background: #222; color: #bada55', velocity);
 			}
-		});
-	}, false);
+		},
+		transportButtons({note, velocity}) {
+			if (note === 116 && velocity > 0) {
+				window.sound.stop();
+			} else if (note === 117 && velocity > 0) {
+				window.sound.play();
+			}
+		}
+	});
 
 	document.querySelector('.play').addEventListener('click', function(e){
 		e.preventDefault();
